@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session
 
-# Caminho relativo (Render cria em /opt/render/project/src/)
+# Caminho para o banco SQLite
 sqlite_url = "sqlite:///banco.db"
 
 engine = create_engine(sqlite_url, echo=False)
@@ -10,5 +10,6 @@ def get_session():
         yield session
 
 def init_db():
-    from .models import Usuario, Conta
+    # Import absoluto para evitar erros no deploy
+    from models import Usuario, Conta
     SQLModel.metadata.create_all(engine)

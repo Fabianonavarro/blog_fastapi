@@ -10,7 +10,11 @@ class Usuario(SQLModel, table=True):
     endereco: str
     senha: str
 
-    contas: List["Conta"] = Relationship(back_populates="usuario", sa_relationship_kwargs={"cascade": "all, delete"}, default_factory=list)
+    # Relacionamento com Contas (sem default_factory)
+    contas: List["Conta"] = Relationship(
+        back_populates="usuario",
+        sa_relationship_kwargs={"cascade": "all, delete"}
+    )
 
 
 class Conta(SQLModel, table=True):
@@ -22,5 +26,6 @@ class Conta(SQLModel, table=True):
     limite_saques: int = Field(default=3)
     numero_saques: int = Field(default=0)
 
+    # Relacionamento com Usuario
     usuario_id: int = Field(foreign_key="usuario.id")
     usuario: Optional[Usuario] = Relationship(back_populates="contas")
