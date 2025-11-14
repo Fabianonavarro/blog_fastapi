@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: blog_fastapi
+    env: python
+    buildCommand: poetry install --no-root
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT

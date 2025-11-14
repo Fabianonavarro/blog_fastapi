@@ -3,7 +3,7 @@ name = "blog_fastapi"
 version = "0.1.0"
 description = "Banco Python convertido para FastAPI + SQLite"
 authors = ["Fabiano Navarro <email>"]
-package-mode = false
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -15,3 +15,6 @@ pydantic = "^2.12.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.extras]
+package-mode = false
