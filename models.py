@@ -1,28 +1,19 @@
-from __future__ import annotations
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List
+from sqlmodel import SQLModel, Field
 from datetime import date
 
-
 class Usuario(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int = Field(default=None, primary_key=True)
     nome: str
-    cpf: str = Field(unique=True, index=True)
+    cpf: str
     data_nascimento: date
     endereco: str
     senha: str
 
-    contas: List[Conta] = Relationship(back_populates="usuario")
-
-
 class Conta(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    agencia: str = Field(default="0001")
-    numero_conta: int = Field(unique=True, index=True)
-    saldo: float = Field(default=0.0)
-    limite: float = Field(default=500.0)
-    limite_saques: int = Field(default=3)
-    numero_saques: int = Field(default=0)
-
-    usuario_id: int = Field(foreign_key="usuario.id")
-    usuario: Optional[Usuario] = Relationship(back_populates="contas")
+    id: int = Field(default=None, primary_key=True)
+    usuario_id: int
+    numero_conta: int
+    agencia: str = "0001"
+    saldo: float = 0.0
+    numero_saques: int = 0
+    limite_saques: int = 3

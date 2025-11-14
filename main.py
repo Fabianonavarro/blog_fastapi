@@ -1,53 +1,14 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from database import database, init_db
-from routers import contas, auth, transaction
-from exceptions import AccountNotFoundError, BusinessError  # crie este arquivo se ainda não existir
+from database import init_db
+from routers import contas
+from exceptions import AccountNotFoundError, BusinessError
 
+app = FastAPI(title="Transactions API", version="1.0.0")
 
-# Lifespan para conectar e desconectar o DB
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await database.connect()
-    yield
-    await database.disconnect()
-
-
-# Metadados das tags da API
-tags_metadata = [
-    {"name": "auth", "description": "Operations for authentication."},
-    {"name": "account", "description": "Operations to maintain accounts."},
-    {"name": "transaction", "description": "Operations to maintain transactions."},
-]
-
-
-# Inicializa o FastAPI
-app = FastAPI(
-    title="Transactions API",
-    version="1.0.0",
-    summary="Microservice to maintain withdrawal and deposit operations from current accounts.",
-    description="""
-Transactions API is the microservice for recording current account transactions. 💸💰
-
-## Account
-* **Create accounts**
-* **List accounts**
-* **List account transactions by ID**
-
-## Transaction
-* **Create transactions**
-""",
-    openapi_tags=tags_metadata,
-    redoc_url=None,
-    lifespan=lifespan,
-)
-
-
-# Middleware CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -56,29 +17,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Rotas
-app.include_router(auth.router, tags=["auth"])
 app.include_router(contas.router, tags=["account"])
-app.include_router(transaction.router, tags=["transaction"])
 
-
-# Handlers de exceção
+# Exceções
 @app.exception_handler(AccountNotFoundError)
 async def handle_account_not_found(request: Request, exc: AccountNotFoundError):
-    return JSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND,
-        content={"detail": "Account not found."},
-    )
-
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"detail": "Account not found."})
 
 @app.exception_handler(BusinessError)
 async def handle_business_error(request: Request, exc: BusinessError):
-    return JSONResponse(
-        status_code=status.HTTP_409_CONFLICT,
-        content={"detail": str(exc)},
-    )
+    return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(exc)})
 
-
-# Inicializa banco de dados (síncrono)
+# Cria tabelas
 init_db()

@@ -1,8 +1,10 @@
 from sqlmodel import Session, select
 from models import Usuario, Conta
+from datetime import datetime
 
 def criar_usuario(session: Session, nome, cpf, data_nascimento, endereco, senha):
-    usuario = Usuario(nome=nome, cpf=cpf, data_nascimento=data_nascimento, endereco=endereco, senha=senha)
+    data_nasc = datetime.strptime(data_nascimento, "%Y-%m-%d").date()
+    usuario = Usuario(nome=nome, cpf=cpf, data_nascimento=data_nasc, endereco=endereco, senha=senha)
     session.add(usuario)
     session.commit()
     session.refresh(usuario)
