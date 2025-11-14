@@ -1,33 +1,33 @@
-from fastapi import FastAPI, Request, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Depends
+from sqlmodel import Session, select
+from database import engine, database
+from models import Usuario, Conta
 
-from database import init_db
-from routers import contas
-from exceptions import AccountNotFoundError, BusinessError
+app = FastAPI()
 
-app = FastAPI(title="Transactions API", version="1.0.0")
+# Incluindo routers se houver
+# app.include_router(contas.router)
 
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Inicializa o banco ao subir a aplicação
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+    from models import Usuario, Conta
+    Usuario.metadata.create_all(engine)
+    Conta.metadata.create_all(engine)
 
-# Rotas
-app.include_router(contas.router, tags=["account"])
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
 
-# Exceções
-@app.exception_handler(AccountNotFoundError)
-async def handle_account_not_found(request: Request, exc: AccountNotFoundError):
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"detail": "Account not found."})
-
-@app.exception_handler(BusinessError)
-async def handle_business_error(request: Request, exc: BusinessError):
-    return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(exc)})
-
-# Cria tabelas
-init_db()
+# Rota raiz funcional: mostra número de usuários e contas
+@app.get("/")
+async def root():
+    with Session(engine) as session:
+        total_usuarios = session.exec(select(Usuario)).all()
+        total_contas = session.exec(select(Conta)).all()
+        return {
+            "total_usuarios": len(total_usuarios),
+            "total_contas": len(total_contas),
+            "mensagem": "API está rodando!"
+        }
