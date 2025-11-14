@@ -8,7 +8,7 @@ router = APIRouter()
 # ---------- Usuários ----------
 @router.post("/usuarios")
 def criar_usuario_endpoint(nome: str, cpf: str, data_nascimento: str, endereco: str, senha: str,
-                            session: Session = Depends(get_session)):
+                           session: Session = Depends(get_session)):
     usuario = criar_usuario(session, nome, cpf, data_nascimento, endereco, senha)
     return {"id": usuario.id, "nome": usuario.nome}
 

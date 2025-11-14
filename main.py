@@ -1,10 +1,16 @@
 from fastapi import FastAPI
+from routers import contas  # import absoluto
 from database import init_db
-from routers import contas
 
-app = FastAPI()
+app = FastAPI(title="Blog FastAPI")
+
+# Inicializa o banco
+init_db()
+
+# Inclui os routers
 app.include_router(contas.router)
 
-@app.on_event("startup")
-def on_startup():
-    init_db()
+# Rota raiz
+@app.get("/")
+def raiz():
+    return {"message": "API Online! Acesse /usuarios, /contas, /deposito, /saque, /transferencia"}
