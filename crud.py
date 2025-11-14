@@ -1,7 +1,6 @@
 from sqlmodel import Session, select
 from models import Usuario, Conta
 
-# ---------- Usuários ----------
 def criar_usuario(session: Session, nome, cpf, data_nascimento, endereco, senha):
     usuario = Usuario(nome=nome, cpf=cpf, data_nascimento=data_nascimento, endereco=endereco, senha=senha)
     session.add(usuario)
@@ -10,15 +9,11 @@ def criar_usuario(session: Session, nome, cpf, data_nascimento, endereco, senha)
     return usuario
 
 def get_usuario(session: Session, cpf, senha):
-    stmt = select(Usuario).where(Usuario.cpf == cpf, Usuario.senha == senha)
-    return session.exec(stmt).first()
+    return session.exec(select(Usuario).where(Usuario.cpf==cpf, Usuario.senha==senha)).first()
 
-
-# ---------- Contas ----------
 def criar_conta(session: Session, usuario: Usuario):
-    # Cria conta com número único simples
-    numero = session.exec(select(Conta.numero_conta)).all()
-    numero_conta = max(numero) + 1 if numero else 1
+    ultima_conta = session.exec(select(Conta).order_by(Conta.numero_conta.desc())).first()
+    numero_conta = (ultima_conta.numero_conta + 1) if ultima_conta else 1
     conta = Conta(usuario_id=usuario.id, numero_conta=numero_conta)
     session.add(conta)
     session.commit()
@@ -26,8 +21,7 @@ def criar_conta(session: Session, usuario: Usuario):
     return conta
 
 def get_conta(session: Session, numero_conta: int):
-    stmt = select(Conta).where(Conta.numero_conta == numero_conta)
-    return session.exec(stmt).first()
+    return session.exec(select(Conta).where(Conta.numero_conta==numero_conta)).first()
 
 def depositar(session: Session, conta: Conta, valor: float):
     if valor <= 0:
@@ -39,7 +33,7 @@ def depositar(session: Session, conta: Conta, valor: float):
     return True
 
 def sacar(session: Session, conta: Conta, valor: float):
-    if valor <= 0 or conta.saldo + conta.limite < valor or conta.numero_saques >= conta.limite_saques:
+    if valor <= 0 or valor > conta.saldo or conta.numero_saques >= conta.limite_saques:
         return False
     conta.saldo -= valor
     conta.numero_saques += 1
@@ -49,7 +43,7 @@ def sacar(session: Session, conta: Conta, valor: float):
     return True
 
 def transferir(session: Session, origem: Conta, destino: Conta, valor: float):
-    if valor <= 0 or origem.saldo + origem.limite < valor:
+    if valor <= 0 or valor > origem.saldo:
         return False
     origem.saldo -= valor
     destino.saldo += valor
