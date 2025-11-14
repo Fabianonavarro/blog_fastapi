@@ -4,9 +4,9 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from database import database  # ajuste para seu módulo
-from routers import contas, auth, transaction  # ajuste caso precise
-from exceptions import AccountNotFoundError, BusinessError  # crie esse arquivo/exceções se não existirem
+from database import database, init_db
+from routers import contas, auth, transaction
+from exceptions import AccountNotFoundError, BusinessError  # crie este arquivo se ainda não existir
 
 
 # Lifespan para conectar e desconectar o DB
@@ -17,6 +17,7 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
+# Metadados das tags da API
 tags_metadata = [
     {"name": "auth", "description": "Operations for authentication."},
     {"name": "account", "description": "Operations to maintain accounts."},
@@ -24,6 +25,7 @@ tags_metadata = [
 ]
 
 
+# Inicializa o FastAPI
 app = FastAPI(
     title="Transactions API",
     version="1.0.0",
@@ -32,14 +34,12 @@ app = FastAPI(
 Transactions API is the microservice for recording current account transactions. 💸💰
 
 ## Account
-
-* **Create accounts**.
-* **List accounts**.
-* **List account transactions by ID**.
+* **Create accounts**
+* **List accounts**
+* **List account transactions by ID**
 
 ## Transaction
-
-* **Create transactions**.
+* **Create transactions**
 """,
     openapi_tags=tags_metadata,
     redoc_url=None,
@@ -57,18 +57,28 @@ app.add_middleware(
 )
 
 
-# Routers
+# Rotas
 app.include_router(auth.router, tags=["auth"])
-app.include_router(contas.router, tags=["account"])  # seu router de contas
+app.include_router(contas.router, tags=["account"])
 app.include_router(transaction.router, tags=["transaction"])
 
 
 # Handlers de exceção
 @app.exception_handler(AccountNotFoundError)
-async def account_not_found_error_handler(request: Request, exc: AccountNotFoundError):
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"detail": "Account not found."})
+async def handle_account_not_found(request: Request, exc: AccountNotFoundError):
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": "Account not found."},
+    )
 
 
 @app.exception_handler(BusinessError)
-async def business_error_handler(request: Request, exc: BusinessError):
-    return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(exc)})
+async def handle_business_error(request: Request, exc: BusinessError):
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content={"detail": str(exc)},
+    )
+
+
+# Inicializa banco de dados (síncrono)
+init_db()

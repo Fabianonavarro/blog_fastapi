@@ -1,12 +1,15 @@
-from sqlmodel import SQLModel, create_engine, Session
+from databases import Database
+from sqlmodel import SQLModel, create_engine
 
-sqlite_url = "sqlite:///banco.db"
-engine = create_engine(sqlite_url, echo=False)
+# Caminho do SQLite
+SQLITE_URL = "sqlite:///banco.db"
 
-def get_session():
-    with Session(engine) as session:
-        yield session
+# Objeto database para async
+database = Database(SQLITE_URL)
+
+# Engine para criar tabelas (síncrono)
+engine = create_engine(SQLITE_URL, echo=False)
 
 def init_db():
-    from models import Usuario, Conta
+    from models import Usuario, Conta  # ajuste para seu módulo
     SQLModel.metadata.create_all(engine)

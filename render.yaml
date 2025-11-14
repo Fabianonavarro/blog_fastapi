@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: blog_fastapi
+    name: transactions-api
     env: python
-    buildCommand: poetry install --no-root
+    buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
