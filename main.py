@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from routers import contas  # import absoluto
+import os
 
 app = FastAPI(title="API Bancario")
 
+# Rota principal
 @app.get("/")
 def root():
     return {"message": "API Bancario rodando!"}

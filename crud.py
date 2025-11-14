@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from .models import Usuario, Conta
+from models import Usuario, Conta
 from datetime import datetime
 
 # ---------------- Usuários ----------------
@@ -27,7 +27,6 @@ def get_usuario(session: Session, cpf: str, senha: str):
 
 # ---------------- Contas ----------------
 def criar_conta(session: Session, usuario: Usuario, agencia="0001"):
-    # Calcular próximo número de conta corretamente
     contas = session.exec(select(Conta.numero_conta)).all()
     numero_conta = (max(contas) + 1) if contas else 1
 
