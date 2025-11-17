@@ -11,8 +11,8 @@ if not DATABASE_URL:
 
 engine = create_engine(
     DATABASE_URL,
-    echo=False,  # evita travar no Render
-    pool_pre_ping=True,  # evita conexões quebradas
+    echo=False,        # evita travar no Render
+    pool_pre_ping=True # evita conexões quebradas
 )
 
 def get_session():

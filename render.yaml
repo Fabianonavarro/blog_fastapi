@@ -1,7 +1,7 @@
 services:
   - type: web
     name: transactions-api
-    env: python
+    runtime: python
     plan: free
     buildCommand: |
       pip install poetry
@@ -13,3 +13,8 @@ services:
         fromDatabase:
           name: blog_fastapi
           property: connectionString
+
+databases:
+  - name: blog_fastapi
+    plan: basic-1gb      # ajuste para o plano que você usa no Render
+    postgresMajorVersion: "18"  # ou a versão que seu banco usa (opcional)

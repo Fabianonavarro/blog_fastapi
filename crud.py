@@ -2,8 +2,9 @@ from sqlmodel import Session, select
 from models import Usuario, Conta
 from datetime import datetime
 
+# ---------- Usuários ----------
 def criar_usuario(session: Session, nome, cpf, data_nascimento, endereco, senha):
-    data_nasc = datetime.strptime(data_nascimento, "%Y-%m-%d").date()
+    data_nasc = datetime.strptime(data_nascimento, "%Y-%m-%d").date() if isinstance(data_nascimento, str) else data_nascimento
     usuario = Usuario(nome=nome, cpf=cpf, data_nascimento=data_nasc, endereco=endereco, senha=senha)
     session.add(usuario)
     session.commit()
@@ -11,8 +12,9 @@ def criar_usuario(session: Session, nome, cpf, data_nascimento, endereco, senha)
     return usuario
 
 def get_usuario(session: Session, cpf, senha):
-    return session.exec(select(Usuario).where(Usuario.cpf==cpf, Usuario.senha==senha)).first()
+    return session.exec(select(Usuario).where(Usuario.cpf == cpf, Usuario.senha == senha)).first()
 
+# ---------- Contas ----------
 def criar_conta(session: Session, usuario: Usuario):
     ultima_conta = session.exec(select(Conta).order_by(Conta.numero_conta.desc())).first()
     numero_conta = (ultima_conta.numero_conta + 1) if ultima_conta else 1
@@ -23,8 +25,9 @@ def criar_conta(session: Session, usuario: Usuario):
     return conta
 
 def get_conta(session: Session, numero_conta: int):
-    return session.exec(select(Conta).where(Conta.numero_conta==numero_conta)).first()
+    return session.exec(select(Conta).where(Conta.numero_conta == numero_conta)).first()
 
+# ---------- Transações ----------
 def depositar(session: Session, conta: Conta, valor: float):
     if valor <= 0:
         return False
