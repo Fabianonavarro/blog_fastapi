@@ -3,7 +3,7 @@ from datetime import date
 
 # ---------- Usuário ----------
 class Usuario(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     nome: str = Field(max_length=100)
     cpf: str = Field(max_length=11, unique=True, index=True)
     data_nascimento: date
@@ -12,7 +12,7 @@ class Usuario(SQLModel, table=True):
 
 # ---------- Conta ----------
 class Conta(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     usuario_id: int = Field(foreign_key="usuario.id")
     numero_conta: int = Field(index=True)
     agencia: str = Field(default="0001", max_length=10)
