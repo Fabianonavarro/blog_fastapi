@@ -11,10 +11,15 @@ if not DATABASE_URL:
 
 engine = create_engine(
     DATABASE_URL,
-    echo=False,        # evita travar no Render
+    echo=False,        # evita logs extensos no Render
     pool_pre_ping=True # evita conexões quebradas
 )
 
 def get_session():
     with Session(engine) as session:
         yield session
+
+# Inicializa as tabelas
+def init_db():
+    from models import Usuario, Conta  # importa os modelos
+    SQLModel.metadata.create_all(engine)
