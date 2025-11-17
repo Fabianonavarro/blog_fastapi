@@ -6,16 +6,17 @@ authors = ["Fabiano <email@exemplo.com>"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.14"
 fastapi = "^0.115"
 uvicorn = { extras = ["standard"], version = "^0.30" }
 sqlmodel = "^0.0.16"
-psycopg = { extras = ["binary"], version = "^3.1" }
-psycopg2 = { version = "^2.9", extras = ["binary"] }
 
+# Usando psycopg v3 (compatível com SQLAlchemy moderno) :contentReference[oaicite:0]{index=0}
+psycopg = { extras = ["binary"], version = "^3.1" }
+
+# Dependências de ambiente (para .env local, etc)
 python-dotenv = "^1.0"
 pydantic = "^2.12"
-
 
 [build-system]
 requires = ["poetry-core"]
