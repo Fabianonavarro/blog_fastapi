@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 from database import get_session
 from crud import criar_usuario, get_usuario, criar_conta, get_conta, depositar, sacar, transferir
-from schemas import UsuarioCreate, Login, Deposito, Saque, Transferencia, ContaOut
+from schemas import UsuarioCreate, Login, Deposito, Saque, Transferencia, ContaOut, UsuarioOut
 
 router = APIRouter()
 
