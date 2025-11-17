@@ -11,10 +11,10 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: blog_fastapi
+          name: blog_fastapi   # isso precisa bater com o nome do banco no painel
           property: connectionString
 
 databases:
-  - name: blog_fastapi
-    plan: basic-1gb      # ajuste para o plano que você usa no Render
-    postgresMajorVersion: "18"  # ou a versão que seu banco usa (opcional)
+  - name: blog_fastapi     # esse nome também deve bater
+    plan: basic-1gb
+    postgresMajorVersion: "18"

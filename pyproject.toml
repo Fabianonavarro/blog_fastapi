@@ -11,6 +11,8 @@ fastapi = "^0.115"
 uvicorn = { extras = ["standard"], version = "^0.30" }
 sqlmodel = "^0.0.16"
 psycopg = { extras = ["binary"], version = "^3.1" }
+psycopg2 = { version = "^2.9", extras = ["binary"] }
+
 python-dotenv = "^1.0"
 pydantic = "^2.12"
 
