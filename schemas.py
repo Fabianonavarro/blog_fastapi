@@ -13,6 +13,8 @@ class UsuarioOut(BaseModel):
     id: int
     nome: str
 
+    model_config = {"from_attributes": True}  # permite criar a partir de SQLModel diretamente
+
 # ---------- Login ----------
 class Login(BaseModel):
     cpf: str = Field(..., example="12345678900")
@@ -37,3 +39,5 @@ class ContaOut(BaseModel):
     numero_conta: int
     agencia: str
     saldo: float
+
+    model_config = {"from_attributes": True}  # também permite criar direto do SQLModel

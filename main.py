@@ -1,16 +1,24 @@
 from fastapi import FastAPI
-from database import init_db
-from routers.contas import router as contas_router
+from sqlmodel import SQLModel
+from database import engine
+from routers import usuarios  # seu arquivo usuarios.py dentro de routers/
 
-app = FastAPI(title="Blog FastAPI - Banco")
+# ---------- Cria app ----------
+app = FastAPI(
+    title="API Bancária FastAPI",
+    description="API simples de usuários, contas e transações bancárias",
+    version="1.0.0"
+)
 
-# Inicializa o banco de dados e tabelas
-init_db()
+# ---------- Cria tabelas no banco ----------
+@app.on_event("startup")
+def on_startup():
+    SQLModel.metadata.create_all(engine)
 
-# Inclui rotas do módulo contas com prefixo /api
-app.include_router(contas_router, prefix="/api")
+# ---------- Inclui routers ----------
+app.include_router(usuarios.router, prefix="/api", tags=["Usuários e Contas"])
 
-# Rota raiz para teste de funcionamento
+# ---------- Root ----------
 @app.get("/")
 def root():
-    return {"message": "API Blog FastAPI funcionando!"}
+    return {"mensagem": "API Bancária funcionando!"}
