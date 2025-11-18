@@ -10,10 +10,9 @@ def create_app() -> FastAPI:
         version="1.0.0"
     )
 
-    @app.on_event("lifespan")
-    async def lifespan(app: FastAPI):
+    @app.on_event("startup")
+    async def on_startup():
         SQLModel.metadata.create_all(engine)
-        yield
 
     app.include_router(usuarios.router, prefix="/api", tags=["Usuários e Contas"])
 
