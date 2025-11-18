@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 from database import get_session
 from crud import criar_usuario, get_usuario, criar_conta, get_conta, depositar, sacar, transferir
@@ -6,44 +6,40 @@ from schemas import UsuarioCreate, Login, Deposito, Saque, Transferencia, ContaO
 
 router = APIRouter()
 
-# ---------- Usuários ----------
 @router.post("/usuarios", response_model=UsuarioOut)
 def criar_usuario_endpoint(usuario: UsuarioCreate, session: Session = Depends(get_session)):
-    return criar_usuario(
-        nome=usuario.nome,
-        cpf=usuario.cpf,
-        data_nascimento=usuario.data_nascimento,
-        endereco=usuario.endereco,
-        senha=usuario.senha,
-        session=session
-    )
+    return criar_usuario(session, usuario.nome, usuario.cpf, usuario.data_nascimento, usuario.endereco, usuario.senha)
 
-# ---------- Contas ----------
 @router.post("/contas", response_model=ContaOut)
 def criar_conta_endpoint(login: Login, session: Session = Depends(get_session)):
-    usuario = get_usuario(login.cpf, login.senha, session=session)
-    return criar_conta(usuario, session=session)
+    usuario = get_usuario(session, login.cpf, login.senha)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado ou senha incorreta")
+    return criar_conta(session, usuario)
 
-# ---------- Depósito ----------
 @router.post("/deposito", response_model=ContaOut)
 def depositar_endpoint(deposito: Deposito, session: Session = Depends(get_session)):
-    conta = get_conta(deposito.numero_conta, session=session)
-    depositar(conta, deposito.valor, session=session)
+    conta = get_conta(session, deposito.numero_conta)
+    if not conta:
+        raise HTTPException(status_code=404, detail="Conta não encontrada")
+    depositar(session, conta, deposito.valor)
     return conta
 
-# ---------- Saque ----------
 @router.post("/saque", response_model=ContaOut)
 def sacar_endpoint(saque_data: Saque, session: Session = Depends(get_session)):
-    conta = get_conta(saque_data.numero_conta, session=session)
-    sacar(conta, saque_data.valor, session=session)
+    conta = get_conta(session, saque_data.numero_conta)
+    if not conta:
+        raise HTTPException(status_code=404, detail="Conta não encontrada")
+    sacar(session, conta, saque_data.valor)
     return conta
 
-# ---------- Transferência ----------
 @router.post("/transferencia", response_model=dict)
 def transferir_endpoint(transf: Transferencia, session: Session = Depends(get_session)):
-    conta_origem = get_conta(transf.origem, session=session)
-    conta_destino = get_conta(transf.destino, session=session)
-    transferir(conta_origem, conta_destino, transf.valor, session=session)
+    conta_origem = get_conta(session, transf.origem)
+    conta_destino = get_conta(session, transf.destino)
+    if not conta_origem or not conta_destino:
+        raise HTTPException(status_code=404, detail="Conta(s) não encontrada(s)")
+    transferir(session, conta_origem, conta_destino, transf.valor)
     return {
         "origem": conta_origem.numero_conta,
         "saldo_origem": conta_origem.saldo,

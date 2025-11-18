@@ -1,43 +1,43 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from datetime import date
 
-# ---------- Usuários ----------
 class UsuarioCreate(BaseModel):
-    nome: str = Field(..., example="João Silva")
-    cpf: str = Field(..., example="12345678900")
-    data_nascimento: date = Field(..., example="1990-01-01")
-    endereco: str = Field(..., example="Rua Exemplo, 123")
-    senha: str = Field(..., example="senhaSegura123")
+    nome: str
+    cpf: str
+    data_nascimento: date
+    endereco: str
+    senha: str
 
 class UsuarioOut(BaseModel):
     id: int
     nome: str
+    cpf: str
+    data_nascimento: date
+    endereco: str
 
-    model_config = {"from_attributes": True}  # permite criar a partir de SQLModel diretamente
+    class Config:
+        orm_mode = True
 
-# ---------- Login ----------
 class Login(BaseModel):
-    cpf: str = Field(..., example="12345678900")
-    senha: str = Field(..., example="senhaSegura123")
+    cpf: str
+    senha: str
 
-# ---------- Transações ----------
-class Deposito(BaseModel):
-    numero_conta: int = Field(..., example=1)
-    valor: float = Field(..., example=100.0)
-
-class Saque(BaseModel):
-    numero_conta: int = Field(..., example=1)
-    valor: float = Field(..., example=50.0)
-
-class Transferencia(BaseModel):
-    origem: int = Field(..., example=1)
-    destino: int = Field(..., example=2)
-    valor: float = Field(..., example=75.0)
-
-# ---------- Contas ----------
 class ContaOut(BaseModel):
     numero_conta: int
-    agencia: str
     saldo: float
 
-    model_config = {"from_attributes": True}  # também permite criar direto do SQLModel
+    class Config:
+        orm_mode = True
+
+class Deposito(BaseModel):
+    numero_conta: int
+    valor: float
+
+class Saque(BaseModel):
+    numero_conta: int
+    valor: float
+
+class Transferencia(BaseModel):
+    origem: int
+    destino: int
+    valor: float
