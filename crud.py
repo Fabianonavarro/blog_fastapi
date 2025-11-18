@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 from models import Usuario, Conta
 from datetime import date, datetime
 from passlib.hash import bcrypt
+from typing import Union, Optional
 
 # ---------- Usuários ----------
 
@@ -9,7 +10,7 @@ def criar_usuario(
     session: Session,
     nome: str,
     cpf: str,
-    data_nascimento: str | date,
+    data_nascimento: Union[str, date],
     endereco: str,
     senha: str
 ) -> Usuario:
@@ -31,8 +32,7 @@ def criar_usuario(
     session.refresh(usuario)
     return usuario
 
-
-def get_usuario(session: Session, cpf: str, senha: str) -> Usuario | None:
+def get_usuario(session: Session, cpf: str, senha: str) -> Optional[Usuario]:
     """Busca usuário pelo CPF e verifica a senha."""
     usuario = session.exec(
         select(Usuario).where(Usuario.cpf == cpf)
@@ -41,7 +41,6 @@ def get_usuario(session: Session, cpf: str, senha: str) -> Usuario | None:
     if usuario and bcrypt.verify(senha, usuario.senha):
         return usuario
     return None
-
 
 # ---------- Contas ----------
 
@@ -58,19 +57,16 @@ def criar_conta(session: Session, usuario: Usuario) -> Conta:
     session.refresh(conta)
     return conta
 
-
-def get_conta(session: Session, numero_conta: int) -> Conta | None:
+def get_conta(session: Session, numero_conta: int) -> Optional[Conta]:
     """Busca conta pelo número."""
     return session.exec(
         select(Conta).where(Conta.numero_conta == numero_conta)
     ).first()
 
-
 # ---------- Transações ----------
 
 class TransacaoError(Exception):
     """Erro genérico para transações bancárias."""
-
 
 def depositar(session: Session, conta: Conta, valor: float) -> None:
     if valor <= 0:
@@ -80,7 +76,6 @@ def depositar(session: Session, conta: Conta, valor: float) -> None:
     session.add(conta)
     session.commit()
     session.refresh(conta)
-
 
 def sacar(session: Session, conta: Conta, valor: float) -> None:
     if valor <= 0:
@@ -95,7 +90,6 @@ def sacar(session: Session, conta: Conta, valor: float) -> None:
     session.add(conta)
     session.commit()
     session.refresh(conta)
-
 
 def transferir(session: Session, origem: Conta, destino: Conta, valor: float) -> None:
     if valor <= 0:

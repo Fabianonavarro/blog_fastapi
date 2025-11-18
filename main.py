@@ -12,7 +12,12 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     async def on_startup():
-        SQLModel.metadata.create_all(engine)
+        try:
+            SQLModel.metadata.create_all(engine)
+            print(" Tabelas criadas com sucesso.")
+        except Exception as e:
+            print(" Erro ao criar tabelas:", e)
+            raise
 
     app.include_router(usuarios.router, prefix="/api", tags=["Usuários e Contas"])
 

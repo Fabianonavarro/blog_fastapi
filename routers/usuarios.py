@@ -12,7 +12,6 @@ from schemas import (
 
 router = APIRouter()
 
-
 # ---------- Usuários ----------
 
 @router.post("/usuarios", response_model=UsuarioOut, status_code=201)
@@ -29,7 +28,6 @@ def criar_usuario_endpoint(
         usuario.senha
     )
 
-
 # ---------- Contas ----------
 
 @router.post("/contas", response_model=ContaOut, status_code=201)
@@ -41,7 +39,6 @@ def criar_conta_endpoint(
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado ou senha incorreta")
     return criar_conta(session, usuario)
-
 
 # ---------- Depósito ----------
 
@@ -59,7 +56,6 @@ def depositar_endpoint(
         raise HTTPException(status_code=400, detail=str(e))
     return conta
 
-
 # ---------- Saque ----------
 
 @router.post("/saque", response_model=ContaOut)
@@ -75,7 +71,6 @@ def sacar_endpoint(
     except TransacaoError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return conta
-
 
 # ---------- Transferência ----------
 

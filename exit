@@ -1,0 +1,31 @@
+[33m966f0e5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m main
+[33mf2ffefc[m Força novo deploy após cancelamento
+[33mf8d33b7[m Força novo deploy com código atualizado
+[33m3bf455d[m Força novo deploy com código atualizado
+[33m38ced3a[m REvisaao final
+[33mdfe99bf[m corrige id para Optional[int]
+[33m520552a[m corrige id para Optional[int]
+[33m5a3acd1[m Corrige models e cria estrutura do projeto
+[33m3476d82[m Projeto FastAPI blog_fastapi pronto para deploy
+[33m052affd[m Projeto FastAPI blog_fastapi pronto para deploy
+[33m602197a[m Projeto FastAPI blog_fastapi pronto para deploy
+[33m198f2b2[m Projeto FastAPI blog_fastapi pronto para deploy
+[33ma913432[m Projeto FastAPI blog_fastapi pronto para deploy
+[33mb646321[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33mb7ce868[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33mf4f24d2[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m4324b9e[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m315cd04[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m555a28e[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33mb4b2916[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m67cad46[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m3b43765[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33md478a15[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m8630ff0[m Atualiza main.py para FastAPI moderno com lifespan e handlers
+[33m941ea98[m Deploy final FastAPI com SQLModel
+[33m8a1dd44[m Deploy final FastAPI com SQLModel
+[33mf1fb374[m Deploy final FastAPI com SQLModel
+[33m5b92a6f[m Projeto FastAPI completo para deploy no Render
+[33mdbba8ea[m Corrige pyproject para Render
+[33m916775f[m Projeto FastAPI + SQLite pronto para subir
+[33mc6b3788[m Subindo projeto completo FastAPI + SQLite
